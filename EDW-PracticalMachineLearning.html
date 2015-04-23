@@ -94,18 +94,18 @@ library(ggplot2)
 library(doSNOW)
 library(foreach)
 library(e1071)</code></pre>
-<p>Load the data ignoring columns not required for the classification (username, timestamps, etc). Also, remove all columns that have an NA value in them.</p>
+<p>Load the data ignoring columns not required for the classification (username, timestamps, etc). Remove all columns that have an NA value in them.</p>
 <pre class="r"><code>set.seed(0)
 
 data.train &lt;- read.csv(&quot;pml-training.csv&quot;, na.strings=c(&quot;NA&quot;, &quot;&quot;, &quot;#DIV/0!&quot;))
 
-data.test &lt;- read.csv(&quot;pml-testing.csv&quot;, na.strings=c(&quot;NA&quot;, &quot;&quot;, &quot;#DIV/0!&quot;))
-
-data.train &lt;- data.train[colnames(data.train[colSums(is.na(data.train)) == 0])[-(1:7)]]
+data.test &lt;- read.csv(&quot;pml-testing.csv&quot;, na.strings=c(&quot;NA&quot;, &quot;&quot;, &quot;#DIV/0!&quot;))</code></pre>
+<p>Remove all columns that have an NA value in them.</p>
+<pre class="r"><code>data.train &lt;- data.train[colnames(data.train[colSums(is.na(data.train)) == 0])[-(1:7)]]
 data.test &lt;- data.test[colnames(data.test[colSums(is.na(data.test)) == 0])[-(1:7)]]</code></pre>
-<p>Remove all the rows with NA from the training data.</p>
+<p>Remove all the rows with NA from the training data. There should not be any since the columns with NA were already removed.</p>
 <pre class="r"><code>data.train &lt;- data.train[complete.cases(data.train),]</code></pre>
-<p>Split the training set into a train and validation set for cross-validation.</p>
+<p>Split the training set into a train and a validation set for cross-validation.</p>
 <pre class="r"><code>data.validation_indexes &lt;- createDataPartition(y=data.train$classe, p=0.70, list=FALSE )
 
 data.train &lt;- data.train[data.validation_indexes,]
@@ -115,7 +115,7 @@ rm(data.validation_indexes)</code></pre>
 <p>Setup the x and y data frames for the random forest training</p>
 <pre class="r"><code>data.x &lt;- data.train[-ncol(data.train)]
 data.y &lt;- data.train$classe</code></pre>
-<p>Train a random forest with 100 trees. Use the DoSnow and foreach package to parallelize the training using 4 threads.</p>
+<p>Train a random forest with 100 trees and default settings for classification. Use the DoSnow and foreach package to parallelize the training using 4 threads.</p>
 <pre class="r"><code>cl&lt;-makeCluster(4)
 
 registerDoSNOW(cl)
@@ -134,7 +134,7 @@ stopCluster(cl)</code></pre>
 ##                Type of random forest: classification
 ##                      Number of trees: 100
 ## No. of variables tried at each split: 7</code></pre>
-<p>Calculate the predictions for the train set.</p>
+<p>Calculate the predictions for the training set.</p>
 <pre class="r"><code>data.predict_train &lt;- predict(rf, newdata=data.train)
 
 confusionMatrix(data.predict_train, data.train$classe)</code></pre>
@@ -169,7 +169,7 @@ confusionMatrix(data.predict_train, data.train$classe)</code></pre>
 ## Detection Rate         0.2843   0.1935   0.1744   0.1639   0.1838
 ## Detection Prevalence   0.2843   0.1935   0.1744   0.1639   0.1838
 ## Balanced Accuracy      1.0000   1.0000   1.0000   1.0000   1.0000</code></pre>
-<p>As expected, the predictions on the training set are 100% accurate.</p>
+<p>The predictions on the training set are 100% accurate. However, the training set accuracy should not be used to estimate out-of-bag error since I have a sufficient number of training samples to use for cross validaion.</p>
 <p>Now, calculate the predictions for the validation set.</p>
 <pre class="r"><code>data.predict_validation &lt;- predict(rf, newdata=data.validation)
 
