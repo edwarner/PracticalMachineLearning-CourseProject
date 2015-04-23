@@ -71,7 +71,7 @@ img {
 <h2>Practical Machine Learning Course Project</h2>
 <div id="executive-summary" class="section level3">
 <h3>Executive Summary</h3>
-<p>The goal of this project is to use fitness data collected from personal activiy monitoring devices to determine how the user was performing barbell lifts. Using a random forest as my classifier with a simple 1-fold cross-validation, I was able to classify the type of barbell lift performed with 100% accuracy on the training set. Details of my model are below.</p>
+<p>The goal of this project is to use fitness data collected from personal activiy monitoring devices to determine how the user was performing barbell lifts. Using a random forest as my classifier with 1-fold cross-validation, I was able to classify the type of barbell lift performed with 100% accuracy on the training set. Details of my model are below.</p>
 </div>
 <div id="background" class="section level3">
 <h3>Background</h3>
@@ -169,8 +169,8 @@ confusionMatrix(data.predict_train, data.train$classe)</code></pre>
 ## Detection Rate         0.2843   0.1935   0.1744   0.1639   0.1838
 ## Detection Prevalence   0.2843   0.1935   0.1744   0.1639   0.1838
 ## Balanced Accuracy      1.0000   1.0000   1.0000   1.0000   1.0000</code></pre>
-<p>The predictions on the training set are 100% accurate. However, the training set accuracy should not be used to estimate out-of-bag error since I have a sufficient number of training samples to use for cross validaion.</p>
-<p>Now, calculate the predictions for the validation set.</p>
+<p>The predictions on the training set are 100% accurate. However, the training set accuracy should not be used to estimate out-of-bag error since I have a sufficient number of training samples to use for cross-validation.</p>
+<p>Now, calculate the predictions for the cross-validation set.</p>
 <pre class="r"><code>data.predict_validation &lt;- predict(rf, newdata=data.validation)
 
 confusionMatrix(data.predict_validation, data.validation$classe)</code></pre>
@@ -205,7 +205,7 @@ confusionMatrix(data.predict_validation, data.validation$classe)</code></pre>
 ## Detection Rate         0.2813   0.1992   0.1727   0.1635   0.1834
 ## Detection Prevalence   0.2813   0.1992   0.1727   0.1635   0.1834
 ## Balanced Accuracy      1.0000   1.0000   1.0000   1.0000   1.0000</code></pre>
-<p>The predictions on the validation set are 100% accurate. With an out-of-bag error rate of 0% from my validation set, I now expect my test set error to also be 0%. Therefore, on the test set, I expect to get all the predictions correct.</p>
+<p>The predictions on the cross-validation set are 100% accurate. With an out-of-bag error rate of 0% from my cross-validation set, I now expect my test set error to also be 0%. Therefore, on the test set, I expect to get all the predictions correct.</p>
 <p>Calculate the predictions for the test set.</p>
 <pre class="r"><code>data.predict_test &lt;- predict(rf, newdata=data.test)
 
@@ -276,7 +276,7 @@ confusionMatrix(data.predict_train_svm, data.train$classe)</code></pre>
 ## Detection Rate         0.2830   0.1733   0.1672   0.1484   0.1741
 ## Detection Prevalence   0.2993   0.1799   0.1912   0.1546   0.1750
 ## Balanced Accuracy      0.9863   0.9438   0.9648   0.9487   0.9731</code></pre>
-<p>Calculate the predictions on the validation set. With an accuracy of only 94.61 percent on the validation, running the SVM with default setting on this data is not quite as accurate as the random forest.</p>
+<p>Calculate the predictions on the cross-validation set. With an accuracy of only 94.61 percent on the validation, running the SVM with default setting on this data is not quite as accurate as the random forest.</p>
 <p>The expected out-of-bag error rate is then 5.39%. Therefore, on the test set, I would expect approximately 1 of the 20 predictions to be incorrect.</p>
 <pre class="r"><code>data.predict_validation_svm &lt;- predict(svm, newdata=data.validation[,1:52])
 
