@@ -1,1 +1,1 @@
-# PracticalMachineLearning-CourseProject
+# EDW-PracticalMachineLearning-CourseProject
